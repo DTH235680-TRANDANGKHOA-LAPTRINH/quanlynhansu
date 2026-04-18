@@ -685,7 +685,8 @@ app.get('/logout', (req, res) => {
     });
 });
 
-// Lắng nghe port
-app.listen(3000, () => {
-    console.log('Server is running at http://127.0.0.1:3000');
+// Lắng nghe port (Render cấp port trong process.env.PORT)
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+    console.log(`Server is running at http://127.0.0.1:${port}`);
 });
