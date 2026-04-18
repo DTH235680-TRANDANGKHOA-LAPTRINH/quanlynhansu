@@ -1,0 +1,14 @@
+<div class="topbar">
+    <div>
+        <p class="text-muted mb-1">Chào mừng,</p>
+        <h1><%= pageTitle %></h1>
+    </div>
+    <div class="user-card">
+        <img src="<%= (user?.NhanVien?.HinhAnh && user.NhanVien.HinhAnh !== 'no-image.jpg') ? (user.NhanVien.HinhAnh.startsWith('/') ? user.NhanVien.HinhAnh : '/' + user.NhanVien.HinhAnh) : 'https://cdn-icons-png.flaticon.com/512/149/149071.png' %>" alt="Avatar" />
+        <div class="meta">
+            <div><strong><%= user?.NhanVien?.TenNV || user?.TenDangNhap %></strong></div>
+            <div class="role"><%= (user?.QuyenHan || 'nhân viên').toUpperCase() %></div>
+        </div>
+        <a href="/logout" class="badge-action"><i class="bi bi-box-arrow-right"></i> Đăng xuất</a>
+    </div>
+</div>

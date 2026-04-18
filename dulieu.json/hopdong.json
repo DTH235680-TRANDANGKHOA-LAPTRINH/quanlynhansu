@@ -1,0 +1,15 @@
+[
+  {
+    "NhanVien": { "$oid": "60d5ec49f1b2c8b1f8e4ea01" },
+    "LoaiHD": "Không xác định thời hạn",
+    "NgayBatDau": { "$date": "2020-01-01T00:00:00Z" },
+    "LuongThoaThuan": 50000000
+  },
+  {
+    "NhanVien": { "$oid": "60d5ec49f1b2c8b1f8e4ea19" },
+    "LoaiHD": "12 Tháng",
+    "NgayBatDau": { "$date": "2023-05-10T00:00:00Z" },
+    "NgayKetThuc": { "$date": "2024-05-10T00:00:00Z" },
+    "LuongThoaThuan": 20000000
+  }
+]

@@ -1,0 +1,7 @@
+[
+  { "_id": { "$oid": "60d5ec49f1b2c8b1f8e4e201" },
+   "TenCV": "Giám Đốc",
+    "HeSoPhuCap": 5.0 },
+  { "_id": { "$oid": "60d5ec49f1b2c8b1f8e4e202" }, "TenCV": "Trưởng Phòng", "HeSoPhuCap": 3.0 },
+  { "_id": { "$oid": "60d5ec49f1b2c8b1f8e4e203" }, "TenCV": "Nhân Viên", "HeSoPhuCap": 1.0 }
+]

@@ -1,0 +1,24 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <div class="container-fluid px-3">
+        <a class="navbar-brand fw-bold" href="/">Hệ thống nhân sự</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link" href="/">Tổng quan</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Nhân sự</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Chấm công</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Lương & Thưởng</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Hợp đồng</a></li>
+            </ul>
+            <% if (user) { %>
+                <span class="navbar-text me-3">Xin chào, <strong><%= user.NhanVien?.TenNV || user.TenDangNhap %></strong></span>
+                <a class="btn btn-outline-secondary" href="/logout"><i class="bi bi-box-arrow-right"></i> Đăng xuất</a>
+            <% } else { %>
+                <a class="btn btn-primary" href="/login"><i class="bi bi-box-arrow-in-right"></i> Đăng nhập</a>
+            <% } %>
+        </div>
+    </div>
+</nav>

@@ -1,0 +1,25 @@
+{
+  "name": "quanlynhansu",
+  "version": "1.0.0",
+  "description": "quan ly nhan su NodeJS + MongoDB Atlas",
+  "license": "ISC",
+  "author": "Tran Dang Khoa",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": " nodemon node index.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^17.4.2",
+    "ejs": "^5.0.2",
+    "exceljs": "^4.4.0",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "mongoose": "^9.4.1",
+    "multer": "^1.4.5-lts.1",
+    "nodemon": "^3.1.14",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0"
+  }
+}

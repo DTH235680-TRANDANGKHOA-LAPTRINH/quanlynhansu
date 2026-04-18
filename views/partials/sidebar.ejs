@@ -1,0 +1,11 @@
+<div class="sidebar">
+    <div class="brand">Hệ thống nhân sự</div>
+    <div class="sidebar-section">Menu</div>
+    <nav>
+        <% menuItems.forEach(item => { %>
+            <a class="<%= item.active ? 'active' : '' %>" href="<%= item.href %>">
+                <i class="bi <%= item.icon %>"></i> <%= item.label %>
+            </a>
+        <% }) %>
+    </nav>
+</div>

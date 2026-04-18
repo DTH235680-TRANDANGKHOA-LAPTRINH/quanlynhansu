@@ -1,0 +1,10 @@
+[
+  { "_id": { "$oid": "60d5ec49f1b2c8b1f8e4e301" }, 
+  "TenPB": "Admin" },
+  { "_id": { "$oid": "60d5ec49f1b2c8b1f8e4e302" }, "TenPB": "HR" },
+  { "_id": { "$oid": "60d5ec49f1b2c8b1f8e4e303" }, "TenPB": "Kế Toán" },
+  { "_id": { "$oid": "60d5ec49f1b2c8b1f8e4e304" }, "TenPB": "Kỹ Thuật" },
+  { "_id": { "$oid": "60d5ec49f1b2c8b1f8e4e305" }, "TenPB": "Marketing" },
+  { "_id": { "$oid": "60d5ec49f1b2c8b1f8e4e306" }, "TenPB": "Sale" },
+  { "_id": { "$oid": "60d5ec49f1b2c8b1f8e4e307" }, "TenPB": "Văn Phòng" }
+]

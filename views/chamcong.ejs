@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <title>Chấm công & Phép</title>
+</head>
+<body>
+    <div class="app-shell">
+        <%- include('partials/sidebar', { menuItems, currentPath: '/chamcong' }) %>
+        <main class="main-content">
+            <%- include('partials/topbar', { user: user, pageTitle: 'Chấm công & Phép' }) %>
+            <div class="card card-custom mb-4">
+                <div class="card-body">
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start gap-3 mb-3">
+                        <div>
+                            <h6 class="mb-1">Tổng quan chấm công</h6>
+                            <p class="text-muted mb-0">Số ngày làm, đi trễ, nghỉ phép, OT và nghỉ không phép trong hệ thống.</p>
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-sm-6 col-md-4 col-lg-2">
+                            <div class="card card-custom p-3 text-center status-card status-good">
+                                <span class="status-label">Đi làm</span>
+                                <div class="h2 mt-3" id="count-dilam"><%= stats['Đi làm'] || 0 %></div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-4 col-lg-2">
+                            <div class="card card-custom p-3 text-center status-card status-bad">
+                                <span class="status-label">Đi trễ</span>
+                                <div class="h2 mt-3" id="count-ditre"><%= stats['Đi trễ'] || 0 %></div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-4 col-lg-2">
+                            <div class="card card-custom p-3 text-center status-card status-good">
+                                <span class="status-label">Nghỉ phép</span>
+                                <div class="h2 mt-3" id="count-nghiphep"><%= stats['Nghỉ phép'] || 0 %></div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-4 col-lg-2">
+                            <div class="card card-custom p-3 text-center status-card status-good">
+                                <span class="status-label">OT</span>
+                                <div class="h2 mt-3" id="count-ot"><%= stats['OT'] || 0 %></div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-4 col-lg-2">
+                            <div class="card card-custom p-3 text-center status-card status-bad">
+                                <span class="status-label">Nghỉ không phép</span>
+                                <div class="h2 mt-3" id="count-nghikhongphep"><%= stats['Nghỉ không phép'] || 0 %></div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-4 col-lg-2">
+                            <div class="card card-custom p-3 text-center status-card status-good">
+                                <span class="status-label">Tăng ca</span>
+                                <div class="h2 mt-3" id="count-tangca"><%= stats['Tăng ca'] || 0 %></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <% if (user.QuyenHan === 'nhanvien') { %>
+                <div class="row g-4 mb-4">
+                    <div class="col-lg-6">
+                        <div class="card card-custom p-4">
+                            <h6>Biểu đồ chấm công</h6>
+                            <canvas id="attendanceChart" height="240"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card card-custom p-4">
+                            <h6>Ghi nhận chấm công</h6>
+                            <form id="attendanceForm">
+                                <input type="hidden" id="NhanVien" name="NhanVien" value="<%= user.NhanVien?._id || user.NhanVien %>">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Ngày</label>
+                                        <input type="date" class="form-control" id="Ngay" name="Ngay" value="<%= new Date().toISOString().slice(0,10) %>" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Trạng thái</label>
+                                        <select class="form-select" id="TrangThai" name="TrangThai" required>
+                                            <option value="Đi làm">Đi làm</option>
+                                            <option value="Đi trễ">Đi trễ</option>
+                                            <option value="Nghỉ phép">Nghỉ phép</option>
+                                            <option value="OT">OT</option>
+                                            <option value="Nghỉ không phép">Nghỉ không phép</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Giờ vào</label>
+                                        <input type="time" class="form-control" id="GioVao" name="GioVao">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Giờ ra</label>
+                                        <input type="time" class="form-control" id="GioRa" name="GioRa">
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label class="form-label">Địa điểm chấm công</label>
+                                        <input type="text" class="form-control" id="DiaDiem" name="DiaDiem" placeholder="Nhập địa điểm (ví dụ: Văn phòng công ty)">
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label">Ghi chú</label>
+                                        <textarea class="form-control" id="GhiChu" name="GhiChu" rows="2"></textarea>
+                                    </div>
+                                </div>
+                                <div class="mt-3 d-flex justify-content-end">
+                                    <button type="submit" class="btn btn-primary">Lưu chấm công</button>
+                                </div>
+                            </form>
+                            <div class="mt-3" id="attendanceMessage"></div>
+                        </div>
+                    </div>
+                </div>
+            <% } else { %>
+                <div class="row g-4 mb-4">
+                    <div class="col-12">
+                        <div class="card card-custom p-4">
+                            <h6>Chấm công</h6>
+                            <p>Chấm công chỉ do nhân viên thực hiện. Admin/HR/Kế toán chỉ xem dữ liệu chấm công tại bảng bên dưới.</p>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+
+            <div class="card card-custom mb-4">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table align-middle" id="attendanceTable">
+                            <thead>
+                                <tr>
+                                    <th>Ngày</th>
+                                    <th>Nhân viên</th>
+                                    <th>Trạng thái</th>
+                                    <th>Giờ vào</th>
+                                    <th>Giờ ra</th>
+                                    <th>Địa điểm</th>
+                                    <th>Ghi chú</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (!attendance.length) { %>
+                                    <tr><td colspan="7" class="text-center">Chưa có dữ liệu chấm công.</td></tr>
+                                <% } else { %>
+                                    <% attendance.forEach(item => { %>
+                                        <tr>
+                                            <td><%= item.Ngay ? item.Ngay.toISOString().slice(0, 10) : '-' %></td>
+                                            <td><%= item.NhanVien?.TenNV || 'Không rõ' %></td>
+                                            <td><%= item.TrangThai %></td>
+                                            <td><%= item.GioVao || '-' %></td>
+                                            <td><%= item.GioRa || '-' %></td>
+                                            <td><%= item.DiaDiem || '-' %></td>
+                                            <td><%= item.GhiChu || '-' %></td>
+                                        </tr>
+                                    <% }) %>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <%- include('footer') %>
+        </main>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        async function fetchAttendance() {
+            const response = await fetch('/api/chamcong');
+            if (!response.ok) {
+                console.error('Lỗi khi tải dữ liệu chấm công');
+                return;
+            }
+            const data = await response.json();
+            if (!data.success) {
+                console.error(data.message);
+                return;
+            }
+            const attendance = data.attendance;
+            const summary = data.summary;
+            document.getElementById('count-dilam').textContent = summary['Đi làm'] || 0;
+            document.getElementById('count-ditre').textContent = summary['Đi trễ'] || 0;
+            document.getElementById('count-nghiphep').textContent = summary['Nghỉ phép'] || 0;
+            document.getElementById('count-ot').textContent = summary['OT'] || 0;
+            document.getElementById('count-nghikhongphep').textContent = summary['Nghỉ không phép'] || 0;
+            document.getElementById('count-tangca').textContent = summary['Tăng ca'] || 0;
+
+            const tableBody = document.querySelector('#attendanceTable tbody');
+            tableBody.innerHTML = '';
+            if (!attendance.length) {
+                tableBody.innerHTML = '<tr><td colspan="7" class="text-center">Chưa có dữ liệu chấm công.</td></tr>';
+            } else {
+                attendance.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${item.Ngay ? item.Ngay.slice(0, 10) : '-'}</td>
+                        <td>${item.NhanVien?.TenNV || 'Không rõ'}</td>
+                        <td>${item.TrangThai}</td>
+                        <td>${item.GioVao || '-'}</td>
+                        <td>${item.GioRa || '-'}</td>
+                        <td>${item.DiaDiem || '-'}</td>
+                        <td>${item.GhiChu || '-'}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }
+
+            updateChart(summary);
+        }
+
+        let attendanceChart;
+        function updateChart(summary) {
+            const labels = Object.keys(summary).length ? Object.keys(summary) : ['Đi làm', 'Đi trễ', 'Nghỉ phép', 'Tăng ca', 'OT', 'Nghỉ không phép'];
+            const values = Object.values(summary).length ? Object.values(summary) : [0, 0, 0, 0, 0, 0];
+            const colors = ['#198754', '#ffc107', '#0d6efd', '#0d6efd', '#6610f2', '#dc3545'];
+
+            const ctx = document.getElementById('attendanceChart');
+            if (!ctx) return;
+            if (attendanceChart) {
+                attendanceChart.data.labels = labels;
+                attendanceChart.data.datasets[0].data = values;
+                attendanceChart.update();
+                return;
+            }
+            attendanceChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels,
+                    datasets: [{
+                        data: values,
+                        backgroundColor: colors.slice(0, labels.length)
+                    }]
+                },
+                options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+            });
+        }
+
+        document.getElementById('attendanceForm')?.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const form = event.target;
+            const payload = {
+                NhanVien: form.NhanVien?.value,
+                Ngay: form.Ngay?.value,
+                TrangThai: form.TrangThai?.value,
+                GioVao: form.GioVao?.value,
+                GioRa: form.GioRa?.value,
+                DiaDiem: form.DiaDiem?.value,
+                GhiChu: form.GhiChu?.value
+            };
+            const response = await fetch('/api/chamcong', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const data = await response.json();
+            const messageBox = document.getElementById('attendanceMessage');
+            if (!data.success) {
+                messageBox.innerHTML = `<div class="alert alert-danger">${data.message || 'Lỗi khi lưu chấm công.'}</div>`;
+                return;
+            }
+            messageBox.innerHTML = '<div class="alert alert-success">Lưu chấm công thành công.</div>';
+            form.reset();
+            form.Ngay.value = new Date().toISOString().slice(0, 10);
+            fetchAttendance();
+        });
+
+        fetchAttendance();
+    </script>
+</body>
+</html>

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <title>Chi tiết nhân sự</title>
+</head>
+<body>
+    <div class="app-shell">
+        <%- include('partials/sidebar', { menuItems, currentPath: '/nhansu' }) %>
+        <main class="main-content">
+            <%- include('partials/topbar', { user: user, pageTitle: 'Chi tiết nhân sự' }) %>
+
+            <div class="row g-4 mb-4">
+                <div class="col-12 col-xl-4">
+                    <div class="card card-custom p-4">
+                        <div class="text-center">
+                            <img src="<%= (employee.HinhAnh && employee.HinhAnh !== 'no-image.jpg') ? (employee.HinhAnh.startsWith('/') ? employee.HinhAnh : '/' + employee.HinhAnh) : 'https://cdn-icons-png.flaticon.com/512/149/149071.png' %>" alt="Avatar" class="employee-avatar-lg mb-3" />
+                            <h3><%= employee.TenNV %></h3>
+                            <p class="text-muted mb-1"><%= employee.ChucVu?.TenCV || 'Chưa có chức vụ' %></p>
+                            <p class="text-muted"><%= employee.PhongBan?.TenPB || 'Chưa có phòng ban' %></p>
+                            <span class="badge bg-<%= employee.TrangThai === 'Đã nghỉ việc' ? 'danger' : 'success' %>"><i class="bi bi-circle-fill me-1"></i> <%= employee.TrangThai || 'Đang làm việc' %></span>
+                        </div>
+                        <hr />
+                        <div class="mb-3">
+                            <h6>Thông tin cơ bản</h6>
+                            <p class="mb-1"><strong>Ngày sinh:</strong> <%= employee.NgaySinh ? employee.NgaySinh.toISOString().slice(0, 10) : '-' %></p>
+                            <p class="mb-1"><strong>Giới tính:</strong> <%= employee.GioiTinh || '-' %></p>
+                            <p class="mb-1"><strong>Số người phụ thuộc:</strong> <%= employee.SoNguoiPhuThuoc || 0 %></p>
+                        </div>
+                        <div>
+                            <h6>Liên hệ</h6>
+                            <p class="mb-1"><strong>Điện thoại:</strong> <%= employee.DienThoai || '-' %></p>
+                            <p class="mb-1"><strong>Địa chỉ:</strong> <%= employee.DiaChi || '-' %></p>
+                        </div>
+                        <% if (taiKhoan) { %>
+                            <hr />
+                            <div>
+                                <h6>Tài khoản hệ thống</h6>
+                                <p class="mb-1"><strong>Username:</strong> <%= taiKhoan.TenDangNhap %></p>
+                                <p class="mb-0"><strong>Quyền:</strong> <%= taiKhoan.QuyenHan %></p>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-8">
+                    <div class="card card-custom p-4">
+                        <ul class="nav nav-pills mb-3" id="profileTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="overview-tab" data-bs-toggle="pill" data-bs-target="#overview" type="button" role="tab">Tổng quan</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="work-tab" data-bs-toggle="pill" data-bs-target="#work" type="button" role="tab">Công việc & Hợp đồng</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="account-tab" data-bs-toggle="pill" data-bs-target="#account" type="button" role="tab">Tài khoản</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="history-tab" data-bs-toggle="pill" data-bs-target="#history" type="button" role="tab">Lịch sử & Offboarding</button>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane fade show active" id="overview" role="tabpanel">
+                                <form action="/nhansu/<%= employee._id %>/cap-nhat" method="POST" enctype="multipart/form-data">
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Họ tên</label>
+                                            <input class="form-control" value="<%= employee.TenNV %>" disabled />
+                                        </div>
+                                        <% if (uploadEnabled) { %>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Ảnh thẻ</label>
+                                                <input name="HinhAnh" class="form-control" type="file" accept="image/*" />
+                                            </div>
+                                        <% } %>
+                                        <div class="col-md-4">
+                                            <label class="form-label">Ngày sinh</label>
+                                            <input name="NgaySinh" type="date" class="form-control" value="<%= employee.NgaySinh ? employee.NgaySinh.toISOString().slice(0, 10) : '' %>" />
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label">Giới tính</label>
+                                            <select name="GioiTinh" class="form-select">
+                                                <option value="">Chọn giới tính</option>
+                                                <option value="Nam" <%= employee.GioiTinh === 'Nam' ? 'selected' : '' %>>Nam</option>
+                                                <option value="Nữ" <%= employee.GioiTinh === 'Nữ' ? 'selected' : '' %>>Nữ</option>
+                                                <option value="Khác" <%= employee.GioiTinh === 'Khác' ? 'selected' : '' %>>Khác</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label">Số người phụ thuộc</label>
+                                            <input name="SoNguoiPhuThuoc" type="number" class="form-control" value="<%= employee.SoNguoiPhuThuoc || 0 %>" min="0" />
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Số điện thoại</label>
+                                            <input name="DienThoai" type="text" class="form-control" value="<%= employee.DienThoai || '' %>" />
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Địa chỉ</label>
+                                            <textarea name="DiaChi" class="form-control" rows="2"><%= employee.DiaChi || '' %></textarea>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-primary" type="submit">Lưu thông tin</button>
+                                </form>
+                            </div>
+                            <div class="tab-pane fade" id="work" role="tabpanel">
+                                <form action="/nhansu/<%= employee._id %>/chuyen-cong-tac" method="POST">
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label">Phòng ban</label>
+                                            <select name="PhongBan" class="form-select">
+                                                <option value="">Chọn phòng ban</option>
+                                                <% phongBans.forEach(pb => { %>
+                                                    <option value="<%= pb._id %>" <%= employee.PhongBan?._id?.toString() === pb._id.toString() ? 'selected' : '' %>><%= pb.TenPB %></option>
+                                                <% }) %>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Chức vụ</label>
+                                            <select name="ChucVu" class="form-select">
+                                                <option value="">Chọn chức vụ</option>
+                                                <% chucVus.forEach(cv => { %>
+                                                    <option value="<%= cv._id %>" <%= employee.ChucVu?._id?.toString() === cv._id.toString() ? 'selected' : '' %>><%= cv.TenCV %></option>
+                                                <% }) %>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-outline-primary" type="submit">Cập nhật công tác</button>
+                                </form>
+                                <hr />
+                                <div>
+                                    <h6>Hợp đồng mới nhất</h6>
+                                    <% if (hopDong) { %>
+                                        <p class="mb-1"><strong>Loại hợp đồng:</strong> <%= hopDong.LoaiHD || '-' %></p>
+                                        <p class="mb-1"><strong>Ngày bắt đầu:</strong> <%= hopDong.NgayBatDau ? hopDong.NgayBatDau.toISOString().slice(0, 10) : '-' %></p>
+                                        <p class="mb-1"><strong>Ngày kết thúc:</strong> <%= hopDong.NgayKetThuc ? hopDong.NgayKetThuc.toISOString().slice(0, 10) : 'Chưa xác định' %></p>
+                                        <p class="mb-0"><strong>Lương thỏa thuận:</strong> <%= hopDong.LuongThoaThuan?.toLocaleString('vi-VN') || 0 %> VND</p>
+                                    <% } else { %>
+                                        <p>Chưa có hợp đồng.</p>
+                                    <% } %>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="account" role="tabpanel">
+                                <% if (taiKhoan) { %>
+                                    <form action="/nhansu/<%= employee._id %>/account" method="POST">
+                                        <div class="row g-3 mb-3">
+                                            <div class="col-md-6">
+                                                <label class="form-label">Tên đăng nhập</label>
+                                                <input class="form-control" value="<%= taiKhoan.TenDangNhap %>" disabled />
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Email tài khoản</label>
+                                                <input class="form-control" value="<%= taiKhoan.Email || '-' %>" disabled />
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Mật khẩu hiện tại</label>
+                                                <input type="text" class="form-control" value="<%= taiKhoan.MatKhauPlain || '********' %>" disabled />
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Mật khẩu mới</label>
+                                                <input name="MatKhauMoi" type="password" class="form-control" placeholder="Đổi mật khẩu" />
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label">Kích hoạt tài khoản</label>
+                                                <select name="KichHoat" class="form-select">
+                                                    <option value="1" <%= taiKhoan.KichHoat === 1 ? 'selected' : '' %>>Mở khóa</option>
+                                                    <option value="0" <%= taiKhoan.KichHoat === 0 ? 'selected' : '' %>>Khóa</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <button class="btn btn-outline-danger" type="submit">Cập nhật tài khoản</button>
+                                    </form>
+                                <% } else { %>
+                                    <p>Nhân viên chưa liên kết tài khoản.</p>
+                                <% } %>
+                            </div>
+                            <div class="tab-pane fade" id="history" role="tabpanel">
+                                <div class="mb-3">
+                                    <h6>Lịch sử ngắn</h6>
+                                    <p>Ở đây có thể lưu note về thăng tiến và các thay đổi công tác.</p>
+                                </div>
+                                <div class="alert alert-warning">
+                                    <strong>Danger Zone:</strong> Nếu nhân viên nghỉ việc, hệ thống sẽ chỉ cập nhật trạng thái và khóa tài khoản. Không xóa dữ liệu lương cũ.
+                                </div>
+                                <form action="/nhansu/<%= employee._id %>/offboard" method="POST" class="mb-3">
+                                    <button class="btn btn-danger" type="submit">Cho nghỉ việc / Offboarding</button>
+                                </form>
+                                <form action="/nhansu/<%= employee._id %>/xoa" method="POST" onsubmit="return confirm('Bạn có muốn xóa nhân viên này? Hành động này sẽ xóa hồ sơ, hợp đồng và tài khoản.');">
+                                    <button class="btn btn-outline-danger" type="submit">Xóa nhân viên</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card card-custom p-4 mt-4">
+                        <h6>Thông tin lương gần nhất</h6>
+                        <% if (luongGanNhat) { %>
+                            <p class="mb-1"><strong>Tháng:</strong> <%= luongGanNhat.Thang %>/<%= luongGanNhat.Nam %></p>
+                            <p class="mb-1"><strong>Lương cơ bản:</strong> <%= luongGanNhat.LuongCoBan.toLocaleString('vi-VN') %> VND</p>
+                            <p class="mb-1"><strong>Lương thực lĩnh:</strong> <%= luongGanNhat.LuongThucLinh.toLocaleString('vi-VN') %> VND</p>
+                        <% } else { %>
+                            <p>Chưa có dữ liệu lương.</p>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+
+            <%- include('footer') %>
+        </main>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

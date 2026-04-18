@@ -1,0 +1,18 @@
+[
+  {
+    "NhanVien": { "$oid": "60d5ec49f1b2c8b1f8e4ea01" },
+    "Ngay": { "$date": "2024-04-17T00:00:00Z" },
+    "TrangThai": "Đi làm",
+    "GioVao": "08:00",
+    "GioRa": "17:30",
+    "GhiChu": ""
+  },
+  {
+    "NhanVien": { "$oid": "60d5ec49f1b2c8b1f8e4ea04" },
+    "Ngay": { "$date": "2024-04-17T00:00:00Z" },
+    "TrangThai": "Đi trễ",
+    "GioVao": "08:45",
+    "GioRa": "17:30",
+    "GhiChu": "Kẹt xe"
+  }
+]
