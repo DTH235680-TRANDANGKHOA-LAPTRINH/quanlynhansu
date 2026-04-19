@@ -17,6 +17,21 @@
             <div class="row g-4 mb-4">
                 <div class="col-12 col-xl-4">
                     <div class="card card-custom p-4">
+                        <% const formatBirthDateForInput = dob => {
+                            if (!dob) return '';
+                            if (dob instanceof Date) return dob.toISOString().split('T')[0];
+                            if (typeof dob === 'number') return `${dob.toString().padStart(4, '0')}-01-01`;
+                            const parsed = new Date(dob);
+                            return Number.isNaN(parsed.getTime()) ? '' : parsed.toISOString().split('T')[0];
+                        };
+                        const formatBirthDateForDisplay = dob => {
+                            if (!dob) return '-';
+                            if (dob instanceof Date) return dob.toLocaleDateString('vi-VN');
+                            if (typeof dob === 'number') return dob.toString();
+                            const parsed = new Date(dob);
+                            return Number.isNaN(parsed.getTime()) ? '-' : parsed.toLocaleDateString('vi-VN');
+                        };
+                        %>
                         <div class="text-center">
                             <img src="<%= (employee.HinhAnh && employee.HinhAnh !== 'no-image.jpg') ? (employee.HinhAnh.startsWith('/') ? employee.HinhAnh : '/' + employee.HinhAnh) : 'https://cdn-icons-png.flaticon.com/512/149/149071.png' %>" alt="Avatar" class="employee-avatar-lg mb-3" />
                             <h3><%= employee.TenNV %></h3>
@@ -27,7 +42,7 @@
                         <hr />
                         <div class="mb-3">
                             <h6>Thông tin cơ bản</h6>
-                            <p class="mb-1"><strong>Năm sinh:</strong> <%= employee.NgaySinh || '-' %></p>
+                            <p class="mb-1"><strong>Ngày sinh:</strong> <%= formatBirthDateForDisplay(employee.NgaySinh) %></p>
                             <p class="mb-1"><strong>Giới tính:</strong> <%= employee.GioiTinh || '-' %></p>
                             <p class="mb-1"><strong>Số người phụ thuộc:</strong> <%= employee.SoNguoiPhuThuoc || 0 %></p>
                         </div>
@@ -78,8 +93,8 @@
                                             </div>
                                         <% } %>
                                         <div class="col-md-4">
-                                            <label class="form-label">Năm sinh</label>
-                                            <input name="NgaySinh" type="number" class="form-control" value="<%= employee.NgaySinh || '' %>" min="1900" max="2100" />
+                                            <label class="form-label">Ngày sinh</label>
+                                            <input name="NgaySinh" type="date" class="form-control" value="<%= formatBirthDateForInput(employee.NgaySinh) %>" />
                                         </div>
                                         <div class="col-md-4">
                                             <label class="form-label">Giới tính</label>

@@ -159,9 +159,14 @@ router.post('/them', requireHRorAdmin, upload.single('HinhAnh'), async (req, res
             return res.status(400).send('Thiếu thông tin bắt buộc: Tên nhân viên và số điện thoại.');
         }
 
+        const parsedNgaySinh = NgaySinh ? new Date(NgaySinh) : null;
+        if (parsedNgaySinh && Number.isNaN(parsedNgaySinh.getTime())) {
+            return res.status(400).send('Ngày sinh không hợp lệ. Vui lòng nhập đầy đủ ngày/tháng/năm.');
+        }
+
         const nhanVienData = {
             TenNV,
-            NgaySinh: NgaySinh ? Number(NgaySinh) : null,
+            NgaySinh: parsedNgaySinh,
             GioiTinh,
             DiaChi,
             DienThoai,
@@ -249,13 +254,17 @@ router.post('/:id/cap-nhat', requireHRorAdmin, upload.single('HinhAnh'), async (
     const id = req.params.id;
     const body = req.body || {};
     const { DiaChi, DienThoai, Gmail, SoNguoiPhuThuoc, GioiTinh, NgaySinh } = body;
+    const parsedNgaySinh = NgaySinh ? new Date(NgaySinh) : null;
+    if (parsedNgaySinh && Number.isNaN(parsedNgaySinh.getTime())) {
+        return res.status(400).send('Ngày sinh không hợp lệ. Vui lòng nhập đầy đủ ngày/tháng/năm.');
+    }
     const data = {
         DiaChi,
         DienThoai,
         Gmail,
         SoNguoiPhuThuoc: Number(SoNguoiPhuThuoc) || 0,
         GioiTinh,
-        NgaySinh: NgaySinh ? Number(NgaySinh) : null
+        NgaySinh: parsedNgaySinh
     };
     if (req.file) {
         const existing = await NhanVien.findById(id).select('HinhAnh').lean();

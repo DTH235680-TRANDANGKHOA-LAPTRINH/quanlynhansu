@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 
 var nhanVienSchema = new mongoose.Schema({
     TenNV: { type: String, required: true },
-    NgaySinh: { type: Number, min: 1900, max: 2100 }, // Năm sinh, 4 số
+    NgaySinh: { type: Date }, // Ngày sinh đầy đủ
     GioiTinh: { type: String },
     DiaChi: { type: String },
     DienThoai: { type: String, match: /^[0-9]{10}$/ }, // Chỉ số, max 10

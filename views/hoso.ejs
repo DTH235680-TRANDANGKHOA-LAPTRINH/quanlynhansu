@@ -30,7 +30,7 @@
                                 <a href="/hoso/sua" class="btn btn-outline-primary btn-sm">Cập nhật thông tin</a>
                             </div>
                             <div class="row g-3 mt-2">
-                                <div class="col-md-6"><strong>Năm sinh:</strong> <%= me.NgaySinh || '-' %></div>
+                                <div class="col-md-6"><strong>Ngày sinh:</strong> <%= me.NgaySinh ? (me.NgaySinh instanceof Date ? me.NgaySinh.toLocaleDateString('vi-VN') : (typeof me.NgaySinh === 'number' ? me.NgaySinh : new Date(me.NgaySinh).toLocaleDateString('vi-VN'))) : '-' %></div>
                                 <div class="col-md-6"><strong>Giới tính:</strong> <%= me.GioiTinh || '-' %></div>
                                 <div class="col-md-6"><strong>Số điện thoại:</strong> <%= me.DienThoai || '-' %></div>
                                 <div class="col-md-6"><strong>Gmail:</strong> <%= me.Gmail || '-' %></div>
