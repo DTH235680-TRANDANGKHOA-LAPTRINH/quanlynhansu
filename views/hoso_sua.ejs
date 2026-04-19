@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/style.css" />
+    <title>Cập nhật hồ sơ</title>
+</head>
+<body>
+    <div class="app-shell">
+        <%- include('partials/sidebar', { menuItems, currentPath: '/hoso' }) %>
+        <main class="main-content">
+            <%- include('partials/topbar', { user: user, pageTitle: 'Cập nhật hồ sơ' }) %>
+            <div class="card card-custom mb-4">
+                <div class="card-body">
+                    <form action="/hoso/sua" method="POST" class="needs-validation" novalidate>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Số điện thoại</label>
+                                <input name="DienThoai" type="text" class="form-control" value="<%= me.DienThoai || '' %>" pattern="[0-9]{10}" title="Số điện thoại phải là 10 chữ số" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Gmail</label>
+                                <input name="Gmail" type="email" class="form-control" value="<%= me.Gmail || '' %>" required />
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Địa chỉ</label>
+                                <textarea name="DiaChi" class="form-control" rows="2"><%= me.DiaChi || '' %></textarea>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                            <a href="/hoso" class="btn btn-outline-secondary ms-2">Huỷ</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <%- include('footer') %>
+        </main>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

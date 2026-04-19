@@ -2,10 +2,11 @@ var mongoose = require('mongoose');
 
 var nhanVienSchema = new mongoose.Schema({
     TenNV: { type: String, required: true },
-    NgaySinh: { type: Date },
+    NgaySinh: { type: Number, min: 1900, max: 2100 }, // Năm sinh, 4 số
     GioiTinh: { type: String },
     DiaChi: { type: String },
-    DienThoai: { type: String },
+    DienThoai: { type: String, match: /^[0-9]{10}$/ }, // Chỉ số, max 10
+    Gmail: { type: String, match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ }, // Email validation
     PhongBan: { type: mongoose.Schema.Types.ObjectId, ref: 'PhongBan' },
     ChucVu: { type: mongoose.Schema.Types.ObjectId, ref: 'ChucVu' },
     SoNguoiPhuThuoc: { type: Number, default: 0 },

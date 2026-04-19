@@ -27,13 +27,14 @@
                         <hr />
                         <div class="mb-3">
                             <h6>Thông tin cơ bản</h6>
-                            <p class="mb-1"><strong>Ngày sinh:</strong> <%= employee.NgaySinh ? employee.NgaySinh.toISOString().slice(0, 10) : '-' %></p>
+                            <p class="mb-1"><strong>Năm sinh:</strong> <%= employee.NgaySinh || '-' %></p>
                             <p class="mb-1"><strong>Giới tính:</strong> <%= employee.GioiTinh || '-' %></p>
                             <p class="mb-1"><strong>Số người phụ thuộc:</strong> <%= employee.SoNguoiPhuThuoc || 0 %></p>
                         </div>
                         <div>
                             <h6>Liên hệ</h6>
                             <p class="mb-1"><strong>Điện thoại:</strong> <%= employee.DienThoai || '-' %></p>
+                            <p class="mb-1"><strong>Gmail:</strong> <%= employee.Gmail || '-' %></p>
                             <p class="mb-1"><strong>Địa chỉ:</strong> <%= employee.DiaChi || '-' %></p>
                         </div>
                         <% if (taiKhoan) { %>
@@ -77,8 +78,8 @@
                                             </div>
                                         <% } %>
                                         <div class="col-md-4">
-                                            <label class="form-label">Ngày sinh</label>
-                                            <input name="NgaySinh" type="date" class="form-control" value="<%= employee.NgaySinh ? employee.NgaySinh.toISOString().slice(0, 10) : '' %>" />
+                                            <label class="form-label">Năm sinh</label>
+                                            <input name="NgaySinh" type="number" class="form-control" value="<%= employee.NgaySinh || '' %>" min="1900" max="2100" />
                                         </div>
                                         <div class="col-md-4">
                                             <label class="form-label">Giới tính</label>
@@ -96,6 +97,10 @@
                                         <div class="col-md-6">
                                             <label class="form-label">Số điện thoại</label>
                                             <input name="DienThoai" type="text" class="form-control" value="<%= employee.DienThoai || '' %>" />
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Gmail</label>
+                                            <input name="Gmail" type="email" class="form-control" value="<%= employee.Gmail || '' %>" />
                                         </div>
                                         <div class="col-md-6">
                                             <label class="form-label">Địa chỉ</label>

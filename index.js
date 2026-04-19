@@ -127,6 +127,7 @@ const menuConfig = {
     ],
     nhanvien: [
         { label: 'Hồ sơ', href: '/hoso', icon: 'bi-person-badge' },
+        { label: 'Tài khoản', href: '/taikhoan/ca-nhan', icon: 'bi-person-circle' },
         { label: 'Lương & Thưởng', href: '/luong', icon: 'bi-cash-stack' },
         { label: 'Chấm công & Phép', href: '/chamcong', icon: 'bi-clock-history' }
     ]
@@ -228,7 +229,7 @@ const updateLatestContractBaseSalary = async (employeeId, newSalary) => {
     }
 };
 
-app.use('/taikhoan', checkLogin, allowRoles(['admin']), taiKhoanRouter);
+app.use('/taikhoan', checkLogin, taiKhoanRouter);
 app.use('/nhansu', checkLogin, allowRoles(['admin', 'hr', 'ketoan']), nhanVienRouter);
 
 // API Routes (không cần authentication cho demo)
@@ -437,38 +438,63 @@ app.get('/luong', checkLogin, allowRoles(['admin', 'ketoan', 'nhanvien']), async
 });
 
 app.get('/luong/them', checkLogin, allowRoles(['admin', 'ketoan']), async (req, res) => {
-    const employees = await NhanVien.find({ TrangThai: 'Đang làm việc' });
-    res.render('luong_them', {
-        user: req.session.user,
-        menuItems: buildMenu(req.session.user, req.path),
-        employees
-    });
+    try {
+        const employees = await NhanVien.find({ TrangThai: 'Đang làm việc' });
+        res.render('luong_them', {
+            user: req.session.user,
+            menuItems: buildMenu(req.session.user, req.path),
+            employees
+        });
+    } catch (error) {
+        console.error('Lỗi mở trang thêm lương:', error);
+        res.status(500).send('Lỗi khi mở trang thêm lương. Vui lòng kiểm tra log server.');
+    }
 });
 
 app.post('/luong/them', checkLogin, allowRoles(['admin', 'ketoan']), async (req, res) => {
-    const data = {
-        NhanVien: req.body.NhanVien,
-        Thang: Number(req.body.Thang) || new Date().getMonth() + 1,
-        Nam: Number(req.body.Nam) || new Date().getFullYear(),
-        LuongCoBan: Number(req.body.LuongCoBan) || 0,
-        PhuCapChucVu: Number(req.body.PhuCapChucVu) || 0,
-        PhuCapKhuVuc: Number(req.body.PhuCapKhuVuc) || 0,
-        LuongOT: Number(req.body.LuongOT) || 0,
-        ThuongKPI: Number(req.body.ThuongKPI) || 0,
-        ThuongChuyenCan: Number(req.body.ThuongChuyenCan) || 0,
-        PhuCapAnTrua: Number(req.body.PhuCapAnTrua) || 0,
-        TroCapPhucLoi: Number(req.body.TroCapPhucLoi) || 0,
-        ThueTNCN: 0,
-        GiamTruKhac: Number(req.body.GiamTruKhac) || 0
-    };
-    const employee = await NhanVien.findById(data.NhanVien);
-    const dependents = employee?.SoNguoiPhuThuoc || 0;
-    const gross = data.LuongCoBan + data.PhuCapChucVu + data.PhuCapKhuVuc + data.LuongOT + data.ThuongKPI + data.ThuongChuyenCan + data.PhuCapAnTrua + data.TroCapPhucLoi;
-    const social = Math.round(data.LuongCoBan * 0.08 + data.LuongCoBan * 0.015 + data.LuongCoBan * 0.01);
-    data.ThueTNCN = calculatePersonalIncomeTax(gross, social, dependents, data.GiamTruKhac);
-    await Luong.create(data);
-    await updateLatestContractBaseSalary(data.NhanVien, data.LuongCoBan);
-    res.redirect('/luong');
+    try {
+        const data = {
+            NhanVien: req.body.NhanVien,
+            Thang: Number(req.body.Thang),
+            Nam: Number(req.body.Nam),
+            LuongCoBan: Number(req.body.LuongCoBan),
+            PhuCapChucVu: Number(req.body.PhuCapChucVu) || 0,
+            PhuCapKhuVuc: Number(req.body.PhuCapKhuVuc) || 0,
+            LuongOT: Number(req.body.LuongOT) || 0,
+            ThuongKPI: Number(req.body.ThuongKPI) || 0,
+            ThuongChuyenCan: Number(req.body.ThuongChuyenCan) || 0,
+            PhuCapAnTrua: Number(req.body.PhuCapAnTrua) || 0,
+            TroCapPhucLoi: Number(req.body.TroCapPhucLoi) || 0,
+            GiamTruKhac: Number(req.body.GiamTruKhac) || 0
+        };
+
+        if (!data.NhanVien) {
+            return res.status(400).send('Vui lòng chọn nhân viên trước khi thêm lương.');
+        }
+        if (!data.Thang || data.Thang < 1 || data.Thang > 12) {
+            return res.status(400).send('Tháng không hợp lệ.');
+        }
+        if (!data.Nam || data.Nam < 1900) {
+            return res.status(400).send('Năm không hợp lệ.');
+        }
+
+        const employee = await NhanVien.findById(data.NhanVien);
+        if (!employee) {
+            return res.status(400).send('Nhân viên không tồn tại.');
+        }
+
+        const exists = await Luong.exists({ NhanVien: data.NhanVien, Thang: data.Thang, Nam: data.Nam });
+        if (exists) {
+            return res.status(400).send('Bảng lương của nhân viên cho tháng này đã tồn tại.');
+        }
+
+        await Luong.create(data);
+        await updateLatestContractBaseSalary(data.NhanVien, data.LuongCoBan);
+        res.redirect('/luong');
+    } catch (error) {
+        console.error('Lỗi thêm lương:', error);
+        res.status(500).send('Lỗi khi thêm bảng lương. Vui lòng kiểm tra dữ liệu và thử lại.');
+    }
 });
 
 app.get('/luong/sua/:id', checkLogin, allowRoles(['admin', 'ketoan']), async (req, res) => {
@@ -583,6 +609,31 @@ app.get('/hoso', checkLogin, allowRoles(['admin', 'hr', 'ketoan', 'nhanvien']), 
         menuItems: buildMenu(req.session.user, req.path),
         employees
     });
+});
+
+app.get('/hoso/sua', checkLogin, allowRoles(['nhanvien']), async (req, res) => {
+    try {
+        const me = await NhanVien.findById(req.session.user.NhanVien);
+        res.render('hoso_sua', {
+            user: req.session.user,
+            menuItems: buildMenu(req.session.user, req.path),
+            me
+        });
+    } catch (error) {
+        console.error('Lỗi mở trang sửa hồ sơ nhân viên:', error);
+        res.status(500).send('Lỗi khi mở trang sửa hồ sơ.');
+    }
+});
+
+app.post('/hoso/sua', checkLogin, allowRoles(['nhanvien']), async (req, res) => {
+    try {
+        const { DienThoai, DiaChi, Gmail } = req.body;
+        await NhanVien.findByIdAndUpdate(req.session.user.NhanVien, { DienThoai, DiaChi, Gmail });
+        res.redirect('/hoso');
+    } catch (error) {
+        console.error('Lỗi khi cập nhật hồ sơ nhân viên:', error);
+        res.status(500).send('Lỗi khi cập nhật hồ sơ.');
+    }
 });
 
 app.get('/report', checkLogin, allowRoles(['admin', 'hr', 'ketoan']), async (req, res) => {

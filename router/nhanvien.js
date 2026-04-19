@@ -145,6 +145,7 @@ router.post('/them', requireHRorAdmin, upload.single('HinhAnh'), async (req, res
             GioiTinh,
             DiaChi,
             DienThoai,
+            Gmail,
             PhongBan,
             ChucVu,
             SoNguoiPhuThuoc,
@@ -160,10 +161,11 @@ router.post('/them', requireHRorAdmin, upload.single('HinhAnh'), async (req, res
 
         const nhanVienData = {
             TenNV,
-            NgaySinh: NgaySinh || null,
+            NgaySinh: NgaySinh ? Number(NgaySinh) : null,
             GioiTinh,
             DiaChi,
             DienThoai,
+            Gmail,
             PhongBan: PhongBan || null,
             ChucVu: ChucVu || null,
             SoNguoiPhuThuoc: Number(SoNguoiPhuThuoc) || 0,
@@ -214,38 +216,7 @@ router.post('/them', requireHRorAdmin, upload.single('HinhAnh'), async (req, res
     }
 });
 
-router.get('/export', async (req, res) => {
-    const { q, phongban, chucvu, trangthai } = req.query;
-    const filter = {};
 
-    if (q) {
-        filter.$or = [
-            { TenNV: { $regex: q, $options: 'i' } },
-            { DienThoai: { $regex: q, $options: 'i' } }
-        ];
-        if (/^[0-9a-fA-F]{24}$/.test(q)) {
-            filter.$or.push({ _id: q });
-        }
-    }
-    if (phongban) filter.PhongBan = phongban;
-    if (chucvu) filter.ChucVu = chucvu;
-    if (trangthai) filter.TrangThai = trangthai;
-
-    const nhanViens = await NhanVien.find(filter).populate('PhongBan').populate('ChucVu');
-
-    const csvRows = [
-        'MaNV,TenNV,PhongBan,ChucVu,DienThoai,TrangThai'
-    ];
-    nhanViens.forEach(nv => {
-        csvRows.push(
-            `${nv._id},"${nv.TenNV}","${nv.PhongBan?.TenPB || ''}","${nv.ChucVu?.TenCV || ''}","${nv.DienThoai || ''}","${nv.TrangThai || ''}"`
-        );
-    });
-
-    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
-    res.setHeader('Content-Disposition', 'attachment; filename=nhan_su_export.csv');
-    res.send(csvRows.join('\n'));
-});
 
 router.get('/:id', async (req, res) => {
     const id = req.params.id;
@@ -277,13 +248,14 @@ router.get('/:id', async (req, res) => {
 router.post('/:id/cap-nhat', requireHRorAdmin, upload.single('HinhAnh'), async (req, res) => {
     const id = req.params.id;
     const body = req.body || {};
-    const { DiaChi, DienThoai, SoNguoiPhuThuoc, GioiTinh, NgaySinh } = body;
+    const { DiaChi, DienThoai, Gmail, SoNguoiPhuThuoc, GioiTinh, NgaySinh } = body;
     const data = {
         DiaChi,
         DienThoai,
+        Gmail,
         SoNguoiPhuThuoc: Number(SoNguoiPhuThuoc) || 0,
         GioiTinh,
-        NgaySinh: NgaySinh || null
+        NgaySinh: NgaySinh ? Number(NgaySinh) : null
     };
     if (req.file) {
         const existing = await NhanVien.findById(id).select('HinhAnh').lean();

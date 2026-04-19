@@ -25,7 +25,11 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Số điện thoại</label>
-                                <input name="DienThoai" type="text" class="form-control" required />
+                                <input name="DienThoai" type="text" class="form-control" required pattern="[0-9]{10}" title="Số điện thoại phải là 10 chữ số" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Gmail</label>
+                                <input name="Gmail" type="email" class="form-control" required />
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Tên đăng nhập</label>
@@ -36,8 +40,8 @@
                                 <input name="MatKhau" type="password" class="form-control" placeholder="Mật khẩu" />
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label">Ngày sinh</label>
-                                <input name="NgaySinh" type="date" class="form-control" />
+                                <label class="form-label">Năm sinh</label>
+                                <input name="NgaySinh" type="number" class="form-control" min="1900" max="2100" required />
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Giới tính</label>

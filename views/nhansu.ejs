@@ -23,7 +23,6 @@
                     <% if (['admin', 'hr'].includes(user?.QuyenHan)) { %>
                         <a href="/nhansu/them" class="btn btn-success"><i class="bi bi-plus-lg"></i> Thêm nhân viên mới</a>
                     <% } %>
-                    <a href="/nhansu/export?<%= new URLSearchParams(filters).toString() %>" class="btn btn-outline-secondary"><i class="bi bi-file-earmark-spreadsheet"></i> Xuất Excel</a>
                 </div>
             </div>
 
