@@ -443,7 +443,8 @@ app.get('/luong/them', checkLogin, allowRoles(['admin', 'ketoan']), async (req, 
         res.render('luong_them', {
             user: req.session.user,
             menuItems: buildMenu(req.session.user, req.path),
-            employees
+            employees,
+            record: null
         });
     } catch (error) {
         console.error('Lỗi mở trang thêm lương:', error);
@@ -453,6 +454,11 @@ app.get('/luong/them', checkLogin, allowRoles(['admin', 'ketoan']), async (req, 
 
 app.post('/luong/them', checkLogin, allowRoles(['admin', 'ketoan']), async (req, res) => {
     try {
+        // --- CHÈN LOG DỮ LIỆU Ở ĐÂY ---
+        console.log("=== THÔNG TIN TỪ FORM LƯƠNG GỬI LÊN ===");
+        console.log(req.body); 
+        console.log("=========================================");
+
         const data = {
             NhanVien: req.body.NhanVien,
             Thang: Number(req.body.Thang),
@@ -492,8 +498,13 @@ app.post('/luong/them', checkLogin, allowRoles(['admin', 'ketoan']), async (req,
         await updateLatestContractBaseSalary(data.NhanVien, data.LuongCoBan);
         res.redirect('/luong');
     } catch (error) {
-        console.error('Lỗi thêm lương:', error);
-        res.status(500).send('Lỗi khi thêm bảng lương. Vui lòng kiểm tra dữ liệu và thử lại.');
+        // --- CHÈN LOG LỖI Ở ĐÂY ---
+        console.log("=== ⚠️ PHÁT HIỆN LỖI KHI LƯU BẢNG LƯƠNG ===");
+        console.log(error); // In ra toàn bộ cục lỗi đỏ chót để bắt bệnh
+        console.log("=============================================");
+        
+        // In trực tiếp lỗi ra màn hình web luôn cho bạn dễ nhìn (thay vì câu báo lỗi chung chung)
+        res.status(500).send('Chi tiết lỗi: ' + error.message);
     }
 });
 

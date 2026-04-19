@@ -15,8 +15,8 @@
             <%- include('partials/topbar', { user: user, pageTitle: 'Thêm bảng lương' }) %>
             <div class="card card-custom mb-4">
                 <div class="card-body">
-                    <h5 class="mb-3"><%= record ? 'Chỉnh sửa bảng lương' : 'Thêm bảng lương mới' %></h5>
-                    <form action="<%= record ? '/luong/sua/' + record._id : '/luong/them' %>" method="POST">
+                    <h5 class="mb-3"><%= (typeof record !== 'undefined' && record) ? 'Chỉnh sửa bảng lương' : 'Thêm bảng lương mới' %></h5>
+                    <form action="<%= (typeof record !== 'undefined' && record) ? '/luong/sua/' + record._id : '/luong/them' %>" method="POST">
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label">Nhân viên</label>
