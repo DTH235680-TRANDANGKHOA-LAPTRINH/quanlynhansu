@@ -26,6 +26,10 @@
                                 <input name="Email" type="email" class="form-control" value="<%= taiKhoan.Email || '' %>" placeholder="example@company.com" />
                             </div>
                             <div class="col-md-6">
+                                <label class="form-label">Gmail nhân viên</label>
+                                <input type="email" class="form-control" value="<%= taiKhoan.NhanVien?.Gmail || '-' %>" disabled />
+                            </div>
+                            <div class="col-md-6">
                                 <label class="form-label">Mật khẩu mới</label>
                                 <input name="MatKhau" type="password" class="form-control" placeholder="Để trống nếu không đổi" />
                             </div>

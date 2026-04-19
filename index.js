@@ -607,7 +607,13 @@ app.post('/tuyendung/xoa/:id', checkLogin, allowRoles(['admin', 'hr']), async (r
 
 app.get('/hoso', checkLogin, allowRoles(['admin', 'hr', 'ketoan', 'nhanvien']), async (req, res) => {
     if (req.session.user.QuyenHan === 'nhanvien') {
-        const me = await NhanVien.findById(req.session.user.NhanVien).populate('PhongBan').populate('ChucVu');
+        const [me, taiKhoan] = await Promise.all([
+            NhanVien.findById(req.session.user.NhanVien).populate('PhongBan').populate('ChucVu'),
+            TaiKhoan.findOne({ NhanVien: req.session.user.NhanVien })
+        ]);
+        if (me && !me.Gmail && taiKhoan?.Email) {
+            me.Gmail = taiKhoan.Email;
+        }
         return res.render('hoso', {
             user: req.session.user,
             menuItems: buildMenu(req.session.user, req.path),
