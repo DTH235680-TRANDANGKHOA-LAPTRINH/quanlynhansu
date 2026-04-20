@@ -56,8 +56,7 @@
                                         <td><%= tk.KichHoat === 1 ? 'Kích hoạt' : 'Khoá' %></td>
                                         <td><%= tk.NhanVien ? tk.NhanVien.TenNV : '-' %></td>
                                         <td>
-                                            <a href="/taikhoan/sua/<%= tk._id %>" class="btn btn-sm btn-outline-secondary me-2">Sửa</a>
-                                            <a href="/taikhoan/xoa/<%= tk._id %>" class="btn btn-sm btn-outline-danger">Xoá</a>
+                                            <a href="/taikhoan/sua/<%= tk._id %>" class="btn btn-sm btn-outline-secondary">Sửa</a>
                                         </td>
                                     </tr>
                                 <% }); %>
