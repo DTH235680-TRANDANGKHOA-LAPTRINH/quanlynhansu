@@ -208,7 +208,7 @@ router.post('/them', requireHRorAdmin, upload.single('HinhAnh'), async (req, res
             TenDangNhap: username,
             MatKhau: hashedPassword,
             MatKhauPlain: password,
-            Email: '',
+            Email: Gmail || '',
             QuyenHan: 'nhanvien',
             KichHoat: 1,
             NhanVien: nhanVien._id
@@ -277,6 +277,7 @@ router.post('/:id/cap-nhat', requireHRorAdmin, upload.single('HinhAnh'), async (
         data.HinhAnh = `images/${req.file.filename}`;
     }
     await NhanVien.findByIdAndUpdate(id, data);
+    await TaiKhoan.updateOne({ NhanVien: id }, { Email: Gmail || '' });
     res.redirect('/nhansu');
 });
 

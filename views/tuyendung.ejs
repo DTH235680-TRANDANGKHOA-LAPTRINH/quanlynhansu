@@ -46,8 +46,7 @@
                                         <td><%= emp.TrangThai || 'Đang làm việc' %></td>
                                         <td>
                                             <div class="d-flex gap-2">
-                                                <a href="/nhansu/sua/<%= emp._id %>" class="btn btn-sm btn-outline-secondary">Sửa</a>
-                                                <form action="/tuyendung/xoa/<%= emp._id %>" method="POST" onsubmit="return confirm('Xóa nhân sự khỏi tuyển dụng?');">
+                                                        <form action="/tuyendung/xoa/<%= emp._id %>" method="POST" onsubmit="return confirm('Xóa nhân sự khỏi tuyển dụng?');">
                                                     <button class="btn btn-sm btn-outline-danger">Xóa</button>
                                                 </form>
                                             </div>
